@@ -13,3 +13,6 @@
 
 
 TODO.md
+
+# Ignore bin (at least for now)
+bin/
