@@ -6,13 +6,15 @@ import java.util.Objects;
 
 
 public class CellChangeEvent extends SudokuEvent {
-    private int row, col;
+    private int row, col, val;
 
     public CellChangeEvent(Object source, int row, int col, int newVal) {
         super(source);
-        this.cell = cell;
+        this.row = row;
+        this.col = col;
     }
 
+    /*
     public SudokuBoard.Cell getCell() { return cell; }
 
     @Override
@@ -22,11 +24,12 @@ public class CellChangeEvent extends SudokuEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (this.getClass() != o.getClass()) return false;
+        if(this == o) return true;
+        if(o == null) return false;
+        if(this.getClass() != o.getClass()) return false;
 
         CellChangeEvent cast = (CellChangeEvent) o;
         return cell.equals(cast.cell);
     }
+    */
 }

@@ -1,7 +1,5 @@
 package gabriel25.jsudoku.controllers.events;
 
-import gabriel25.jsudoku.model.SudokuBoard;
-
 import java.time.LocalDateTime;
 import java.util.EventObject;
 
