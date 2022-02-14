@@ -57,8 +57,9 @@ public class SudokuBoard {
 
         public void overridePencilMarks(int[] vals) {
             int pm[] = SudokuBoard.this.pencilMarks[row][col];
-            
-            pm = Arrays.copyOf(vals, 9);
+
+            pm = Arrays.stream(vals).distinct().map((int i) -> i <= 9 ? (i <= 1 ? i : 0) : 0).toArray();
+            pm = Arrays.copyOf(pm, 9);
             Arrays.sort(pm);
         }
 
@@ -109,6 +110,7 @@ public class SudokuBoard {
         return 73 * Arrays.deepHashCode(values) + 79 * Arrays.deepHashCode(pencilMarks);
     }
 
+    @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null) return false;
