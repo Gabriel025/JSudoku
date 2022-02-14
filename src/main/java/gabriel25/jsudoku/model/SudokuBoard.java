@@ -78,7 +78,7 @@ public class SudokuBoard {
         //these 9's won't be hardcoded and grid size will be sourced from SudokuVariants, once implemented
         //as a result, to avoid future refactoring, I'm not using field initializers for these arrays
         values = new int[9][9];
-        //if I really wish to optimize this, I could use bitmaps; for now this works
+        //if I really wish to optimize this, I could use bitfields; for now this works
         pencilMarks = new int[9][9][9];
     }
 
