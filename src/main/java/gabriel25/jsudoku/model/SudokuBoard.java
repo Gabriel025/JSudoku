@@ -1,7 +1,9 @@
 package gabriel25.jsudoku.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.IntStream;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 
 public class SudokuBoard {
@@ -20,32 +22,27 @@ public class SudokuBoard {
         public void setValue(int val) { SudokuBoard.this.values[row][col] = val; }
 
         public boolean isPencilMarkSet(int digit) {
-            int pm[] = SudokuBoard.this.pencilMarks[row][col];
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
 
-            return Arrays.stream(pm).anyMatch((int i) -> i == digit);
+            return pm.contains(digit);
         }
 
         public int[] getPencilMarks() {
-            int pm[] = SudokuBoard.this.pencilMarks[row][col];
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
 
-            return Arrays.stream(pm).filter((int i) -> i != 0).toArray();
+            return new int[]{}; //need to sort and unbox pm.toArray() (or change method signature)
         }
 
         public void setPencilMark(int val) {
-            int pm[] = SudokuBoard.this.pencilMarks[row][col];
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
 
-            if(pm[0] != 0) return; //all pencil marks are already set
-            
-            pm[0] = val;
-            Arrays.sort(pm);
+            pm.add(val);
         }
 
         public void erasePencilMark(int val) {
-            int pm[] = SudokuBoard.this.pencilMarks[row][col];
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
 
-            pm = Arrays.stream(pm)
-                       .map((int i) -> i == val ? 0 : i)
-                       .sorted().toArray();
+            pm.remove(val);
         }
 
         public void togglePencilMark(int val) {
@@ -56,30 +53,37 @@ public class SudokuBoard {
         }
 
         public void overridePencilMarks(int[] vals) {
-            int pm[] = SudokuBoard.this.pencilMarks[row][col];
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
 
-            pm = Arrays.stream(vals).distinct().map((int i) -> i <= 9 ? (i <= 1 ? i : 0) : 0).toArray();
-            pm = Arrays.copyOf(pm, 9);
-            Arrays.sort(pm);
+            pm.clear();
+            pm.addAll(Arrays.stream(vals).boxed().collect(Collectors.toList()));
         }
 
         public void clearPencilMarks() {
-            SudokuBoard.this.pencilMarks[row][col] =
-                IntStream.generate(() -> 0).limit(9).toArray();
+            HashSet<Integer> pm = SudokuBoard.this.pencilMarks[row][col];
+
+            pm.clear();
         }
     }
 
     //later on: differentiate between given values (clues) and user values
     //also possibly include the solution as another array (not neccesary though)
     private int values[][];
-    private int pencilMarks[][][];
+    private HashSet<Integer> pencilMarks[][];
 
     public SudokuBoard() {
         //these 9's won't be hardcoded and grid size will be sourced from SudokuVariants, once implemented
         //as a result, to avoid future refactoring, I'm not using field initializers for these arrays
         values = new int[9][9];
-        //if I really wish to optimize this, I could use bitfields; for now this works
-        pencilMarks = new int[9][9][9];
+        //I don't like the need for boxing when using containers
+        //if I really wish to optimize this, I could use bitfields, but for, now this works 
+        //note: produces a warning (HashSet and HashSet<T> are different types)
+        //that's okay for now, will probably replace arrays with lists anyway
+        pencilMarks = new HashSet[9][9];
+
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                pencilMarks[i][j] = new HashSet<Integer>(9);
     }
 
     public SudokuBoard(int givenValues[][]) {
@@ -96,18 +100,18 @@ public class SudokuBoard {
         for(int i = 0; i < 9; i++)
             for(int j = 0; j < 9; j++) {
                 values[i][j] = board.values[i][j];
-                for(int k = 0; k < 9; k++)
-                    pencilMarks[i][j][k] = board.pencilMarks[i][j][k];
+                pencilMarks[i][j] = new HashSet<Integer>(board.pencilMarks[i][j]);
             }
     }
 
+    /** Note: row and column are indexed from 1 */
     public Cell at(int row, int col) {
         return new Cell(row, col);
     }
 
     @Override
     public int hashCode() {
-        return 73 * Arrays.deepHashCode(values) + 79 * Arrays.deepHashCode(pencilMarks);
+        return 73 * Arrays.deepHashCode(values) + 79 * pencilMarks.hashCode();
     }
 
     @Override
@@ -119,6 +123,6 @@ public class SudokuBoard {
         SudokuBoard cast = (SudokuBoard)o;
         
         return Arrays.deepEquals(values, cast.values)
-            && Arrays.deepEquals(pencilMarks, cast.pencilMarks);
+            && pencilMarks.equals(cast.pencilMarks);
     }
 }
