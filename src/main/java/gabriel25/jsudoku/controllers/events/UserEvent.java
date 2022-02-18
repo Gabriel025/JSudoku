@@ -4,26 +4,24 @@ import java.time.LocalDateTime;
 import java.util.EventObject;
 
 
-
-public abstract class SudokuEvent extends EventObject {
+public abstract class UserEvent extends EventObject {
     private LocalDateTime timestamp;
     
-    protected SudokuEvent(Object source) {
+    protected UserEvent(Object source) {
         this(source, LocalDateTime.now());
     }
 
-    protected SudokuEvent(Object source, LocalDateTime timestamp) {
+    protected UserEvent(Object source, LocalDateTime timestamp) {
         super(source);
         this.timestamp = timestamp;
     }
 
-    protected SudokuEvent(SudokuEvent e) {
+    protected UserEvent(UserEvent e) {
         this(e.source, e.timestamp);
     }
 
     public LocalDateTime getTimestamp() { return timestamp; }
-    public SudokuEvent setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
-        return this;
     }
 }

@@ -1,10 +1,9 @@
 package gabriel25.jsudoku.controllers.events;
 
-import java.time.LocalDateTime;
-
 import gabriel25.jsudoku.model.SudokuBoard;
 
-public class NewBoardEvent extends SudokuEvent {
+
+public class NewBoardEvent extends UserEvent {
     SudokuBoard board;
     
     public NewBoardEvent(Object source, SudokuBoard newBoard) {

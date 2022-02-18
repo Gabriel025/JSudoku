@@ -5,10 +5,10 @@ import gabriel25.jsudoku.model.SudokuBoard;
 import java.util.Objects;
 
 
-public class CellChangeEvent extends SudokuEvent {
+public class CellInputEvent extends UserEvent {
     private int row, col, val;
 
-    public CellChangeEvent(Object source, int row, int col, int newVal) {
+    public CellInputEvent(Object source, int row, int col, int newVal) {
         super(source);
         this.row = row;
         this.col = col;
