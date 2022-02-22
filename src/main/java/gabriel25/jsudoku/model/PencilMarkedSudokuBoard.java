@@ -4,8 +4,11 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
 
-//note: pencil marks and any future decorations (cell coloring and such) are sort of a separate concern
-//preferably split them into separate classes later
+/*
+note: pencil marks and any future decorations (cell coloring and such) are sort of a separate concern
+preferably split them into separate classes later
+this is just a simple implementation for the time being
+*/
 public class PencilMarkedSudokuBoard extends SudokuBoard {
     /**
      * Inner class of SudokuBoard that is used for easier manipulation of the board.
