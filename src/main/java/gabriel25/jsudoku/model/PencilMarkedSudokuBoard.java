@@ -1,5 +1,6 @@
 package gabriel25.jsudoku.model;
 
+
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
@@ -10,58 +11,6 @@ preferably split them into separate classes later
 this is just a simple implementation for the time being
 */
 public class PencilMarkedSudokuBoard extends SudokuBoard {
-    /**
-     * Inner class of SudokuBoard that is used for easier manipulation of the board.
-     */
-    public class Cell extends SudokuBoard.Cell {
-        protected Cell(int row, int col) {
-            super(row, col);
-        }
-
-        public boolean isPencilMarkSet(int digit) {
-            return pencilMarks[row * SIZE + col].contains(digit);
-        }
-
-        public IntSet getPencilMarks() {
-            return IntSets.unmodifiable(pencilMarks[row * SIZE + col]);
-        }
-
-        public int[] getPencilMarkArray() {
-            return pencilMarks[row * SIZE + col].intStream().sorted().toArray();
-        }
-
-        public void setPencilMark(int val) {
-            if(val < 1 || val > SIZE)
-                throw new IllegalArgumentException(
-                    "Pencil mark value " + val + " is not a valid digit "
-                    + "for board of size " + SIZE + ".");
-
-            pencilMarks[row * SIZE + col].add(val);
-        }
-
-        public void erasePencilMark(int val) {
-            pencilMarks[row * SIZE + col].remove(val);
-        }
-
-        public void togglePencilMark(int val) {
-            if(isPencilMarkSet(val))
-                erasePencilMark(val);
-            else
-                setPencilMark(val);
-        }
-
-        public void overridePencilMarks(int[] vals) {
-            clearPencilMarks();
-            
-            for(int val : vals)
-                setPencilMark(val);
-        }
-
-        public void clearPencilMarks() {
-            pencilMarks[row * SIZE + col].clear();
-        }
-    }
-
     private IntOpenHashSet pencilMarks[];
 
     public PencilMarkedSudokuBoard() {
@@ -88,32 +37,76 @@ public class PencilMarkedSudokuBoard extends SudokuBoard {
         }
     }
 
-    public int getSize() { return SIZE; }
+    /** Note: row and column are indexed from 1 */
+    public boolean isPencilMarkSet(int row, int col, int val) {
+        validatePos(row, col);
+        validateValue(val);
+        row--;
+        col--;
+
+        return pencilMarks[row * SIZE + col].contains(val);
+    }
 
     /** Note: row and column are indexed from 1 */
-    public Cell at(int row, int col) {
-        if(row < 1 || col < 1 || row > SIZE || col > SIZE)
-            throw new IndexOutOfBoundsException(
-                "Grid position [" + row + ", " + col
-                + "] is out of bounds. (Board size: " + SIZE + "x" + SIZE + ")"
-            );
-        
-        return new Cell(row, col);
+    public IntSet getPencilMarks(int row, int col) {
+        validatePos(row, col);
+        row--;
+        col--;
+
+        return IntSets.unmodifiable(pencilMarks[row * SIZE + col]);
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode(); //61 * SIZE + 73 * Arrays.hashCode(values) + 79 * Arrays.hashCode(pencilMarks);
+    /** Note: row and column are indexed from 1 */
+    public int[] getPencilMarkArray(int row, int col) {
+        validatePos(row, col);
+        row--;
+        col--;
+
+        return pencilMarks[row * SIZE + col].intStream().sorted().toArray();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null) return false;
-        if(getClass() != o.getClass()) return false;
+    /** Note: row and column are indexed from 1 */
+    public void setPencilMark(int row, int col, int val) {
+        validatePos(row, col);
+        validateValue(val);
+        row--;
+        col--;
+
+        pencilMarks[row * SIZE + col].add(val);
+    }
+
+    /** Note: row and column are indexed from 1 */
+    public void erasePencilMark(int row, int col, int val) {
+        validatePos(row, col);
+        validateValue(val);
+        row--;
+        col--;
+
+        pencilMarks[row * SIZE + col].remove(val);
+    }
+
+    /** Note: row and column are indexed from 1 */
+    public void togglePencilMark(int row, int col, int val) {
+        if(isPencilMarkSet(row, col, val))
+            erasePencilMark(row, col, val);
+        else
+            setPencilMark(row, col, val);
+    }
+
+    /** Note: row and column are indexed from 1 */
+    public void overridePencilMarks(int row, int col, int[] vals) {
+        clearPencilMarks(row, col);
         
-        SudokuBoard cast = (SudokuBoard)o;
-        
-        return super.equals(cast); //&& Arrays.deepEquals(pencilMarks, cast.pencilMarks);
+        for(int val : vals)
+            setPencilMark(row, col, val);
+    }
+
+    /** Note: row and column are indexed from 1 */
+    public void clearPencilMarks(int row, int col) {
+        validatePos(row, col);
+        row--;
+        col--;
+
+        pencilMarks[row * SIZE + col].clear();
     }
 }
