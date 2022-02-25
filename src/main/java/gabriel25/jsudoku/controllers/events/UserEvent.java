@@ -7,6 +7,7 @@ import java.util.EventObject;
 public abstract class UserEvent extends EventObject {
     private LocalDateTime timestamp;
     
+    //NOTE: source should be a User class instance, once implemented
     protected UserEvent(Object source) {
         this(source, LocalDateTime.now());
     }
